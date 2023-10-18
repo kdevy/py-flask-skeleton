@@ -1,0 +1,4 @@
+# Flask project template
+
+```
+```
