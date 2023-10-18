@@ -8,6 +8,7 @@ import logging
 
 db = None
 
+
 def create_app():
     global db
     db = SQLAlchemy()
@@ -30,7 +31,7 @@ def create_app():
         "mysql",
         username=os.environ["MYSQL_USER"],
         password=os.environ["MYSQL_PASSWORD"],
-        host="web-xplorer-db-1",
+        host=os.environ["MYSQL_HOST"],
         port=3306,
         database=os.environ["MYSQL_DATABASE"],
     )
