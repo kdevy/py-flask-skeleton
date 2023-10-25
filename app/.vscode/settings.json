@@ -18,5 +18,6 @@
     "files.trimTrailingWhitespace": true,
     "python.analysis.extraPaths": [
         "./"
-    ]
+    ],
+    "html.format.enable": false
 }
