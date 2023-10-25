@@ -1,12 +1,14 @@
 from flask.views import View
 from flask import render_template, request, jsonify, current_app
 from models.User import User
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from bootstrap import db
+from ..forms.SginUpForm import SginUpForm
 
 class SginUpView(View):
     def __init__(self, template):
         self.template = template
+        self.form = SginUpForm()
 
     def dispatch_request(self):
         if (request.method == "POST"):
@@ -15,7 +17,7 @@ class SginUpView(View):
             if (action == "sginup"):
                 return self.sginup_post()
 
-        return render_template(self.template)
+        return render_template(self.template, form=self.form)
 
     def sginup_post(self):
         name = request.form.get("name")
@@ -25,22 +27,8 @@ class SginUpView(View):
 
         user = User.query.filter_by(email=email).first()
 
-        errors = []
-        if not name:
-            errors.append("名前を入力してください。")
-        if not email:
-            errors.append("メールアドレスを入力してください。")
-        if not password:
-            errors.append("パスワードを入力してください。")
-        if len(password) < 8:
-            errors.append("パスワードは8文字以上で入力してください。")
-        if not confirm_password:
-            errors.append("確認用パスワードを入力してください。")
-        if password != confirm_password:
-            errors.append("パスワードが一致しません。")
-        if errors:
-            return jsonify({"ok":False, "errors": errors})
-
+        if not self.form.validate_on_submit():
+            return jsonify({"ok":False, "errors": self.form.errors})
         if user:
             return jsonify({"ok":False, "errors": ["入力内容を確認してください。"]})
 
