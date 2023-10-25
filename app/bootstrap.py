@@ -1,13 +1,15 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.engine import URL
 from werkzeug.urls import url_encode
 from flask_login import LoginManager
 import os
 import logging
+import time
 
 db = None
 
+start_time = time.time()
 
 def create_app():
     global db
@@ -35,6 +37,22 @@ def create_app():
         port=3306,
         database=os.environ["MYSQL_DATABASE"],
     )
+
+    app.logger.info("init application --------------")
+
+    @app.before_request
+    def before_request_callback():
+        app.logger.info("request : path = %s, method = %s, remote addr = %s"% (request.path, request.method, request.remote_addr))
+        app.logger.info("UA : %s"% (request.user_agent.string))
+
+    @app.after_request
+    def after_request_callback(response):
+        global start_time
+        lap = time.time() - start_time
+        app.logger.info("lap : %s s"% (lap))
+        app.logger.info("exsit application")
+
+        return response
 
     db.init_app(app)
 
