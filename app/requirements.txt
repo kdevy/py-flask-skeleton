@@ -6,3 +6,4 @@ flask-login
 mod_wsgi
 flask_wtf
 Werkzeug==2.3.7
+email_validator
