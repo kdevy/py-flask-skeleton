@@ -1,0 +1,79 @@
+{% extends 'main/default.html' %}
+
+{% block title %}
+ManagementSheet
+{% endblock %}
+{% block head %}
+<script src="https://kit.fontawesome.com/c8a365b521.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block header %}
+<a class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white" href="#">
+  Management-Sheet
+</a>
+{% endblock %}
+
+{% block content %}
+<input type="hidden" id="requestTabName" name="requestTabName" value="{{ tabname }}">
+<ul class="flex border-b mt-1">
+  <li class="-mb-px mr-1">
+    <a id="gotop" class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-700 font-semibold">
+      <i class="fa-solid fa-list"></i>
+    </a>
+  </li>
+  <li class="mr-1">
+    <a class="bg-white inline-block py-2 px-4 text-blue-500 hover:text-blue-800 font-semibold" href="#">Tab</a>
+  </li>
+  <li class="mr-1">
+    <a class="bg-white inline-block py-2 px-4 text-gray-400 font-semibold" href="#">Tab</a>
+  </li>
+</ul>
+<div id="tabContent" class="container mx-auto px-4 h-full p-5"></div>
+{% endblock %}
+
+{% block script %}
+<script>
+  class TabManager {
+    constructor() {
+
+    }
+
+    page(path, historyPath) {
+      console.log(historyPath)
+      if (historyPath) {
+        console.log("history.pushState: ", historyPath);
+        history.pushState({path: path}, "", historyPath);
+      }
+
+      $.get({
+        url: path,
+      }).then(function(response) {
+        $("#tabContent").html(response);
+      });
+    }
+  }
+  var tabManager = new TabManager();
+
+  $(function() {
+    var requestTabName = $("#requestTabName").val();
+    console.log(requestTabName)
+
+    if (requestTabName) {
+      tabManager.page("/main/ms/gettab/"+requestTabName);
+    }
+
+    $(window).on('popstate', function(e){
+      console.log("popstate", e.state)
+      if (!e.originalEvent.state) return;
+      tabManager.page(e.state.path);
+    })
+
+    $(document).on("click", "#newSheetBtn", function(e) {
+      tabManager.page("/main/ms/gettab/create", "./create");
+    });
+    $(document).on("click", "#gotop", function(e) {
+      tabManager.page("/main/ms/gettab/top", "./top");
+    });
+  });
+</script>
+{% endblock %}

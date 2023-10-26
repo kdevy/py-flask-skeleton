@@ -3,5 +3,10 @@ from flask import Blueprint
 from flask_login import login_required
 from .views.TopView import TopView
 
-app = Blueprint(os.path.basename(os.path.dirname(__file__)), __name__, template_folder="templates", static_folder="satic")
-app.add_url_rule("/", view_func=login_required(TopView.as_view("top", "top.html")))
+modulename = os.path.basename(os.path.dirname(__file__))
+app = Blueprint(modulename, __name__, template_folder="templates", static_folder="satic")
+app.add_url_rule("/", view_func=login_required(TopView.as_view("top", modulename+"/top.html")))
+
+from modules import ms, mypage
+app.register_blueprint(ms.app, url_prefix="/ms")
+app.register_blueprint(mypage.app, url_prefix="/mypage")
