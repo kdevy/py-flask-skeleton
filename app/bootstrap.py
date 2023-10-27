@@ -16,7 +16,7 @@ def create_app():
     db = SQLAlchemy()
     app = Flask(__name__)
 
-    app.config["DEBUG"] = True
+    app.config["DEBUG"] = os.getenv("DEBUG") or True
 
     app.secret_key = "TL3kMJFVYseSEDNhjPW5kcRDVQLtXdRwNpGUuBbz"
 
