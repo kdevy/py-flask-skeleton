@@ -1,0 +1,1 @@
+INSERT INTO `user`(`id`, `name`, `email`, `password`, `created_dt`, `updated_dt`) VALUES (1, 'Admin', 'admin@test.com', 'pbkdf2:sha256:600000$QP6IYNRheGxSCzlp$396743c6fc8904d4b033a0f7376920f5f6660b72ae1476e2dfb8fec3c3ab531d', NOW(), NOW());
