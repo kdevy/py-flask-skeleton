@@ -40,6 +40,7 @@ def create_app():
 
     @app.before_request
     def before_request_callback():
+        app.logger.info("init application -----------------")
         app.logger.info("request : path = %s, method = %s, remote addr = %s"% (request.path, request.method, request.remote_addr))
         app.logger.info("UA : %s"% (request.user_agent.string))
 
@@ -48,7 +49,7 @@ def create_app():
         global start_time
         lap = time.time() - start_time
         app.logger.info("lap : %s s"% (lap))
-        app.logger.info("exsit application")
+        app.logger.info("exsit")
 
         return response
 
