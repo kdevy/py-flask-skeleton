@@ -31,14 +31,12 @@ def create_app():
 
     app.config["SQLALCHEMY_DATABASE_URI"] = URL.create(
         "mysql",
-        username=os.environ["MYSQL_USER"],
-        password=os.environ["MYSQL_PASSWORD"],
-        host=os.environ["MYSQL_HOST"],
+        username=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        host=os.getenv("MYSQL_HOST"),
         port=3306,
-        database=os.environ["MYSQL_DATABASE"],
+        database=os.getenv("MYSQL_DATABASE"),
     )
-
-    app.logger.info("init application --------------")
 
     @app.before_request
     def before_request_callback():
