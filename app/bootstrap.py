@@ -8,8 +8,7 @@ import logging
 import time
 
 db = None
-
-start_time = time.time()
+start_time = None
 
 def create_app():
     global db
@@ -40,8 +39,10 @@ def create_app():
 
     @app.before_request
     def before_request_callback():
+        global start_time
+        start_time = time.time()
         app.logger.info("init application -----------------")
-        app.logger.info("request : path = %s, method = %s, remote addr = %s"% (request.path, request.method, request.remote_addr))
+        app.logger.info("request : path = %s, method = %s, remote addr = %s"% (request.full_path, request.method, request.remote_addr))
         app.logger.info("UA : %s"% (request.user_agent.string))
 
     @app.after_request
