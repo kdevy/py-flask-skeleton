@@ -15,9 +15,9 @@ ManagementSheet
 
 {% block content %}
 <input type="hidden" id="requestTabName" name="requestTabName" value="{{ tabname }}">
-<ul class="flex border-b mt-1">
-  <li class="-mb-px mr-1">
-    <a id="gotop" class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-700 font-semibold">
+<ul id="tabbar" class="flex border-b mt-1">
+  <li data-tabbar_item="{{ url_for('main.ms.top') }}" data-refresh="1" class="-mb-px mr-1">
+    <a href="{{ url_for('main.ms.top') }}" data-transtab class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-700 font-semibold">
       <i class="fa-solid fa-list"></i>
     </a>
   </li>
@@ -28,7 +28,10 @@ ManagementSheet
     <a class="bg-white inline-block py-2 px-4 text-gray-400 font-semibold" href="#">Tab</a>
   </li>
 </ul>
-<div id="tabContent" class="container mx-auto px-4 h-full p-5"></div>
+<div id="tabContent" class="container mx-auto px-4 h-full p-5">
+  {% block tabcontent %}
+  {% endblock %}
+</div>
 {% endblock %}
 
 {% block script %}
@@ -38,15 +41,21 @@ ManagementSheet
 
     }
 
-    page(path, historyPath) {
-      console.log(historyPath)
-      if (historyPath) {
-        console.log("history.pushState: ", historyPath);
-        history.pushState({path: path}, "", historyPath);
+    page(_url) {
+      console.log("TabManager.page()", {_url});
+
+      let url = new URL(_url, location.href);
+
+      if (location.href != url.toString()) {
+        history.pushState("", "", url);
       }
 
+      url.searchParams.set("inner", 1);
+
+      console.log("TabManager.page() req", {url});
+
       $.get({
-        url: path,
+        url: url,
       }).then(function(response) {
         $("#tabContent").html(response);
       });
@@ -59,20 +68,21 @@ ManagementSheet
     console.log(requestTabName)
 
     if (requestTabName) {
-      tabManager.page("/main/ms/gettab/"+requestTabName);
+      tabManager.page("/main/ms/"+requestTabName);
     }
 
     $(window).on('popstate', function(e){
-      console.log("popstate", e.state)
-      if (!e.originalEvent.state) return;
-      tabManager.page(e.state.path);
+      console.log("popstate", location.href)
+      tabManager.page(location.href);
     })
 
-    $(document).on("click", "#newSheetBtn", function(e) {
-      tabManager.page("/main/ms/gettab/create", "./create");
-    });
-    $(document).on("click", "#gotop", function(e) {
-      tabManager.page("/main/ms/gettab/top", "./top");
+    $(document).on("click", "[data-transtab]", function(e) {
+      if ($(this).attr("href")) {
+        tabManager.page($(this).attr("href"));
+        return false;
+      } else {
+        tabManager.page($(this).attr("data-transtab"));
+      }
     });
   });
 </script>

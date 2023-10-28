@@ -1,10 +1,9 @@
 from flask import render_template
 from .BaseView import BaseView
 
-class SheetView(BaseView):
+class TopView(BaseView):
     def __init__(self, template):
         super().__init__(template)
 
-    def dispatch_request(self, sheetname):
-        self.contexts["sheetname"] = sheetname
+    def dispatch_request(self):
         return render_template(self.template, **self.contexts)

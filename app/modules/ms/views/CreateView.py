@@ -1,10 +1,9 @@
-from flask.views import View
-from flask import render_template, current_app, url_for
-from flask_login import current_user
+from flask import render_template
+from .BaseView import BaseView
 
-class CreateView(View):
+class CreateView(BaseView):
     def __init__(self, template):
-        self.template = template
+        super().__init__(template)
 
     def dispatch_request(self):
-        return render_template(self.template, user=current_user)
+        return render_template(self.template, **self.contexts)
